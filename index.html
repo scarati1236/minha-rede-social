@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSocial - Simulador de Rede Social</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #1c1e21;
+            --text-secondary: #65676b;
+            --border-color: #dddfe2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        /* Navbar */
+        nav {
+            background-color: var(--card-bg);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .user-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-small {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #ccc;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Post Box */
+        .post-box {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .post-box-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            border: none;
+            background: #f0f2f5;
+            border-radius: 20px;
+            padding: 12px 15px;
+            resize: none;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .post-box-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* Feed Posts */
+        .post {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-user-name {
+            font-weight: bold;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .post-actions {
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: none;
+            color: var(--text-secondary);
+            padding: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: #f2f2f2;
+        }
+
+        .action-btn.liked {
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="logo">DevSocial</a>
+        <div class="user-nav">
+            <div class="avatar-small"></div>
+            <span>Meu Perfil</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Post Composer -->
+        <div class="post-box">
+            <div class="post-box-header">
+                <div class="avatar-small"></div>
+                <textarea id="postInput" placeholder="O que você está pensando?" rows="2"></textarea>
+            </div>
+            <div class="post-box-footer">
+                <button id="btnPost">Publicar</button>
+            </div>
+        </div>
+
+        <!-- Feed -->
+        <div id="feed">
+            <!-- Posts will appear here -->
+        </div>
+    </div>
+
+    <script>
+        const postInput = document.getElementById('postInput');
+        const btnPost = document.getElementById('btnPost');
+        const feed = document.getElementById('feed');
+
+        // Initial Data
+        let posts = [
+            {
+                id: 1,
+                user: 'João Silva',
+                content: 'Olá mundo! Este é o meu primeiro post neste simulador de rede social.',
+                time: '2 horas atrás',
+                likes: 5,
+                liked: false
+            },
+            {
+                id: 2,
+                user: 'Maria Santos',
+                content: 'Codar é vida! HTML, CSS e JS são a base de tudo.',
+                time: '5 horas atrás',
+                likes: 12,
+                liked: true
+            }
+        ];
+
+        function renderPosts() {
+            feed.innerHTML = '';
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <div class="avatar-small"></div>
+                        <div class="post-user-info">
+                            <span class="post-user-name">${post.user}</span>
+                            <span class="post-time">${post.time}</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        ${post.content}
+                    </div>
+                    <div class="post-actions">
+                        <span class="action-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                            ${post.liked ? '❤️' : '🤍'} ${post.likes} Curtidas
+                        </span>
+                        <span class="action-btn">
+                            💬 Comentar
+                        </span>
+                    </div>
+                `;
+                feed.appendChild(postElement);
+            });
+        }
+
+        function toggleLike(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                if (post.liked) {
+                    post.likes--;
+                    post.liked = false;
+                } else {
+                    post.likes++;
+                    post.liked = true;
+                }
+                renderPosts();
+            }
+        }
+
+        btnPost.addEventListener('click', () => {
+            const content = postInput.value.trim();
+            if (content) {
+                const newPost = {
+                    id: Date.now(),
+                    user: 'Você',
+                    content: content,
+                    time: 'Agora mesmo',
+                    likes: 0,
+                    liked: false
+                };
+                posts.unshift(newPost);
+                postInput.value = '';
+                renderPosts();
+            }
+        });
+
+        // Initial Render
+        renderPosts();
+    </script>
+</body>
+</html>
