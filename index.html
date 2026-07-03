@@ -3,365 +3,476 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scaratigram - Sua Rede Social de Texto</title>
+    <title>Scaratigram | Premium Text Network</title>
     <style>
         :root {
-            --primary-color: #ff0000; /* Vermelho */
-            --bg-color: #ffffff;      /* Branco */
-            --text-main: #000000;
-            --text-secondary: #555555;
-            --border-color: #ff0000;
-            --card-bg: #fffafa;
+            --primary: #000000;
+            --bg: #ffffff;
+            --surface: #fcfcfc;
+            --border: #e0e0e0;
+            --text: #000000;
+            --text-muted: #666666;
+            --accent: #000000;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
         }
 
-        /* Navbar */
+        /* Layout */
         nav {
-            background-color: var(--primary-color);
-            padding: 15px 20px;
+            background: var(--bg);
+            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white;
+            border-bottom: 1px solid var(--primary);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
         }
 
         .logo {
-            color: white;
             font-size: 24px;
-            font-weight: bold;
-            text-decoration: none;
+            font-weight: 900;
+            letter-spacing: -1px;
             text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
-        .user-nav {
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Container */
-        .container {
-            max-width: 650px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        /* Auth Screen */
-        #auth-screen {
+        .nav-links {
             display: flex;
-            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+        }
+
+        /* Auth */
+        #auth-screen {
+            position: fixed;
+            inset: 0;
+            background: white;
+            display: flex;
             align-items: center;
             justify-content: center;
-            height: 80vh;
+            z-index: 2000;
         }
 
         .auth-card {
-            border: 3px solid var(--primary-color);
-            padding: 30px;
             width: 100%;
-            max-width: 400px;
-            background: var(--card-bg);
-        }
-
-        .auth-card h2 {
-            margin-bottom: 20px;
-            color: var(--primary-color);
+            max-width: 350px;
             text-align: center;
         }
 
+        .auth-card h1 { font-size: 32px; margin-bottom: 30px; }
+
         input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 15px;
-            border: 1px solid var(--primary-color);
-            font-family: inherit;
+            border: 1px solid var(--primary);
+            outline: none;
+            font-size: 14px;
         }
 
-        /* Main Feed (Hidden by default) */
-        #main-app {
-            display: none;
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.2s;
         }
 
-        /* Post Box */
-        .post-box {
-            border: 2px solid var(--primary-color);
+        button:hover { background: white; color: black; }
+
+        /* Feed & Posts */
+        .post-composer {
+            border: 1px solid var(--primary);
             padding: 20px;
             margin-bottom: 30px;
-            background: var(--card-bg);
         }
 
         textarea {
             width: 100%;
-            border: 1px solid var(--primary-color);
-            background: #ffffff;
-            padding: 15px;
+            border: none;
             resize: none;
             outline: none;
             font-size: 16px;
-            margin-bottom: 10px;
-            font-family: inherit;
+            margin-bottom: 15px;
+            min-height: 80px;
         }
 
-        .post-box-footer {
+        .post {
+            border-bottom: 1px solid var(--border);
+            padding: 30px 0;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .user-tag { font-weight: 800; cursor: pointer; }
+        .user-tag:hover { text-decoration: underline; }
+
+        .post-content { font-size: 18px; margin-bottom: 20px; }
+
+        .post-footer { display: flex; gap: 20px; font-size: 13px; font-weight: bold; }
+        .action { cursor: pointer; text-decoration: underline; }
+
+        /* Sidebar & DMs */
+        .sidebar-section {
+            border: 1px solid var(--primary);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--primary);
+            padding-bottom: 5px;
+        }
+
+        .dm-item {
+            font-size: 14px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        button {
-            background-color: var(--primary-color);
+        .badge {
+            background: black;
             color: white;
-            border: 2px solid var(--primary-color);
-            padding: 10px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
+            padding: 2px 6px;
+            font-size: 10px;
+            border-radius: 10px;
         }
 
-        button:hover {
-            background-color: white;
-            color: var(--primary-color);
+        /* Modal DMs */
+        #dm-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn-outline {
-            background-color: white;
-            color: var(--primary-color);
-        }
-
-        /* Feed Posts */
-        .post {
-            border: 1px solid var(--primary-color);
-            padding: 20px;
-            margin-bottom: 20px;
+        .modal-content {
             background: white;
+            width: 90%;
+            max-width: 500px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid black;
         }
 
-        .post-header {
-            margin-bottom: 15px;
-            border-bottom: 1px dashed var(--primary-color);
-            padding-bottom: 10px;
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid black;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
-        .post-user-name {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .post-time {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .post-content {
-            margin-bottom: 20px;
-            line-height: 1.6;
-            font-size: 18px;
-        }
-
-        .post-actions {
+        #chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
             display: flex;
-            gap: 25px;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .action-btn {
-            color: var(--primary-color);
-            cursor: pointer;
+        .msg {
+            padding: 10px;
+            max-width: 80%;
             font-size: 14px;
-            font-weight: bold;
-            text-decoration: underline;
         }
 
-        .logout-btn {
-            font-size: 12px;
-            text-decoration: underline;
-            cursor: pointer;
+        .msg.sent { align-self: flex-end; background: black; color: white; }
+        .msg.received { align-self: flex-start; border: 1px solid black; }
+
+        .modal-input {
+            padding: 20px;
+            border-top: 1px solid black;
+            display: flex;
+            gap: 10px;
         }
 
-        /* Utility */
-        .hidden { display: none; }
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            nav { padding: 15px 20px; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- Auth -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h1>SCARATIGRAM</h1>
+            <input type="text" id="usernameInput" placeholder="IDENTIDADE (NOME)">
+            <button onclick="login()">ACESSAR REDE</button>
+        </div>
+    </div>
+
     <nav>
-        <a href="#" class="logo">Scaratigram</a>
-        <div id="nav-user-info" class="user-nav">
-            <!-- Nome do usuário aparecerá aqui -->
+        <div class="logo">SCARATIGRAM</div>
+        <div class="nav-links">
+            <span id="nav-user" style="font-weight: 800;"></span>
+            <span class="action" onclick="logout()">SAIR</span>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Tela de Autenticação -->
-        <div id="auth-screen">
-            <div class="auth-card">
-                <h2 id="auth-title">CRIAR CONTA</h2>
-                <input type="text" id="usernameInput" placeholder="NOME DE USUÁRIO">
-                <button id="btnStart" style="width: 100%;">ENTRAR NA REDE</button>
+        <main>
+            <div class="post-composer">
+                <textarea id="postInput" placeholder="O QUE HÁ DE NOVO?"></textarea>
+                <button onclick="createPost()">PUBLICAR</button>
             </div>
-        </div>
+            <div id="feed"></div>
+        </main>
 
-        <!-- Aplicativo Principal -->
-        <div id="main-app">
-            <div class="post-box">
-                <textarea id="postInput" placeholder="O QUE VOCÊ ESTÁ PENSANDO?" rows="3"></textarea>
-                <div class="post-box-footer">
-                    <span class="logout-btn" onclick="logout()">[ SAIR ]</span>
-                    <button id="btnPost">PUBLICAR</button>
-                </div>
+        <aside>
+            <div class="sidebar-section">
+                <h3>SOLICITAÇÕES DE DM</h3>
+                <div id="dm-requests"></div>
             </div>
+            <div class="sidebar-section">
+                <h3>CONVERSAS ATIVAS</h3>
+                <div id="active-chats"></div>
+            </div>
+        </aside>
+    </div>
 
-            <div id="feed">
-                <!-- Posts aparecerão aqui -->
+    <!-- DM Modal -->
+    <div id="dm-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="chat-with-name" style="font-weight: 900;">NOME</span>
+                <span class="action" onclick="closeDM()">FECHAR</span>
+            </div>
+            <div id="chat-messages"></div>
+            <div class="modal-input">
+                <input type="text" id="dmInput" placeholder="MENSAGEM...">
+                <button style="width: 80px;" onclick="sendDM()">ENVIAR</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Seletores
-        const authScreen = document.getElementById('auth-screen');
-        const mainApp = document.getElementById('main-app');
-        const usernameInput = document.getElementById('usernameInput');
-        const btnStart = document.getElementById('btnStart');
-        const navUserInfo = document.getElementById('nav-user-info');
-        const postInput = document.getElementById('postInput');
-        const btnPost = document.getElementById('btnPost');
-        const feed = document.getElementById('feed');
+        // State
+        let user = localStorage.getItem('s_user') || null;
+        let posts = JSON.parse(localStorage.getItem('s_posts')) || [];
+        let dms = JSON.parse(localStorage.getItem('s_dms')) || {}; // { user1: { user2: { status: 'pending/active', messages: [] } } }
+        let currentChat = null;
 
-        // Estado da Aplicação
-        let currentUser = localStorage.getItem('scaratigram_user') || null;
-        let posts = JSON.parse(localStorage.getItem('scaratigram_posts')) || [
-            {
-                id: 1,
-                user: 'SISTEMA',
-                content: 'BEM-VINDO AO SCARATIGRAM. UMA REDE SOCIAL EM VERMELHO E BRANCO.',
-                time: 'INÍCIO',
-                likes: 0,
-                liked: false
-            }
-        ];
-
-        // Inicialização
-        function init() {
-            if (currentUser) {
-                showApp();
-            } else {
-                showAuth();
-            }
-            renderPosts();
-        }
-
-        function showAuth() {
-            authScreen.style.display = 'flex';
-            mainApp.style.display = 'none';
-            navUserInfo.textContent = '';
-        }
-
-        function showApp() {
-            authScreen.style.display = 'none';
-            mainApp.style.display = 'block';
-            navUserInfo.textContent = `[ @${currentUser.toUpperCase()} ]`;
-        }
-
-        function saveData() {
-            localStorage.setItem('scaratigram_posts', JSON.stringify(posts));
-        }
-
-        function renderPosts() {
-            feed.innerHTML = '';
-            posts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.className = 'post';
-                postElement.innerHTML = `
-                    <div class="post-header">
-                        <span class="post-user-name">@${post.user}</span>
-                        <span class="post-time">${post.time}</span>
-                    </div>
-                    <div class="post-content">
-                        ${post.content}
-                    </div>
-                    <div class="post-actions">
-                        <span class="action-btn" onclick="toggleLike(${post.id})">
-                            ${post.liked ? '[ CURTIDO ]' : '[ CURTIR ]'} (${post.likes})
-                        </span>
-                    </div>
-                `;
-                feed.appendChild(postElement);
-            });
-        }
-
-        function toggleLike(id) {
-            const post = posts.find(p => p.id === id);
-            if (post) {
-                if (post.liked) {
-                    post.likes--;
-                    post.liked = false;
-                } else {
-                    post.likes++;
-                    post.liked = true;
-                }
-                saveData();
-                renderPosts();
+        function login() {
+            const val = document.getElementById('usernameInput').value.trim().toLowerCase();
+            if(val) {
+                user = val;
+                localStorage.setItem('s_user', user);
+                location.reload();
             }
         }
 
         function logout() {
-            localStorage.removeItem('scaratigram_user');
-            currentUser = null;
-            showAuth();
+            localStorage.removeItem('s_user');
+            location.reload();
         }
 
-        // Eventos
-        btnStart.addEventListener('click', () => {
-            const name = usernameInput.value.trim();
-            if (name) {
-                currentUser = name;
-                localStorage.setItem('scaratigram_user', name);
-                showApp();
+        function init() {
+            if(!user) {
+                document.getElementById('auth-screen').style.display = 'flex';
+                return;
+            }
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('nav-user').textContent = `@${user.toUpperCase()}`;
+            renderFeed();
+            renderSidebar();
+        }
+
+        function createPost() {
+            const content = document.getElementById('postInput').value.trim();
+            if(!content) return;
+            const newPost = {
+                id: Date.now(),
+                author: user,
+                content: content.toUpperCase(),
+                date: new Date().toLocaleTimeString(),
+                likes: 0
+            };
+            posts.unshift(newPost);
+            localStorage.setItem('s_posts', JSON.stringify(posts));
+            document.getElementById('postInput').value = '';
+            renderFeed();
+        }
+
+        function renderFeed() {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = posts.map(p => `
+                <div class="post">
+                    <div class="post-header">
+                        <span class="user-tag" onclick="requestDM('${p.author}')">@${p.author.toUpperCase()}</span>
+                        <span>${p.date}</span>
+                    </div>
+                    <div class="post-content">${p.content}</div>
+                    <div class="post-footer">
+                        <span class="action">CURTIR (${p.likes})</span>
+                        <span class="action" onclick="requestDM('${p.author}')">ENVIAR DM</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // DM Logic
+        function requestDM(target) {
+            if(target === user) return;
+            
+            // Garantir estrutura
+            if(!dms[target]) dms[target] = {};
+            
+            // Se já existe uma conversa ativa em qualquer direção
+            let isActive = (dms[target][user] && dms[target][user].status === 'active') || 
+                           (dms[user] && dms[user][target] && dms[user][target].status === 'active');
+
+            if(isActive) {
+                openDM(target);
             } else {
-                alert('POR FAVOR, INSIRA UM NOME.');
+                // Se não existe, criar solicitação
+                if(!dms[target][user]) {
+                    dms[target][user] = { status: 'pending', messages: [] };
+                    alert(`SOLICITAÇÃO DE DM ENVIADA PARA @${target.toUpperCase()}`);
+                } else {
+                    alert(`SOLICITAÇÃO JÁ ESTÁ PENDENTE COM @${target.toUpperCase()}`);
+                }
             }
-        });
+            saveDMs();
+            renderSidebar();
+        }
 
-        btnPost.addEventListener('click', () => {
-            const content = postInput.value.trim();
-            if (content) {
-                const now = new Date();
-                const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
-                
-                const newPost = {
-                    id: Date.now(),
-                    user: currentUser.toUpperCase(),
-                    content: content.toUpperCase(),
-                    time: timeStr,
-                    likes: 0,
-                    liked: false
-                };
-                
-                posts.unshift(newPost);
-                postInput.value = '';
-                saveData();
-                renderPosts();
+        function acceptDM(requester) {
+            if(dms[user] && dms[user][requester]) {
+                dms[user][requester].status = 'active';
+                saveDMs();
+                renderSidebar();
+                openDM(requester);
             }
-        });
+        }
 
-        // Rodar ao carregar
+        function openDM(target) {
+            currentChat = target;
+            document.getElementById('dm-modal').style.display = 'flex';
+            document.getElementById('chat-with-name').textContent = `@${target.toUpperCase()}`;
+            renderMessages();
+        }
+
+        function closeDM() {
+            document.getElementById('dm-modal').style.display = 'none';
+            currentChat = null;
+        }
+
+        function sendDM() {
+            const text = document.getElementById('dmInput').value.trim();
+            if(!text || !currentChat) return;
+
+            let chat;
+            if(dms[user] && dms[user][currentChat]) chat = dms[user][currentChat];
+            else if(dms[currentChat] && dms[currentChat][user]) chat = dms[currentChat][user];
+
+            if(chat) {
+                chat.messages.push({ sender: user, text: text.toUpperCase() });
+                saveDMs();
+                renderMessages();
+                document.getElementById('dmInput').value = '';
+            }
+        }
+
+        function renderMessages() {
+            const container = document.getElementById('chat-messages');
+            let chat;
+            if(dms[user] && dms[user][currentChat]) chat = dms[user][currentChat];
+            else if(dms[currentChat] && dms[currentChat][user]) chat = dms[currentChat][user];
+
+            if(chat) {
+                container.innerHTML = chat.messages.map(m => `
+                    <div class="msg ${m.sender === user ? 'sent' : 'received'}">${m.text}</div>
+                `).join('');
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        function renderSidebar() {
+            const reqDiv = document.getElementById('dm-requests');
+            const activeDiv = document.getElementById('active-chats');
+            
+            // Requests to ME
+            let requests = [];
+            if(dms[user]) {
+                for(let sender in dms[user]) {
+                    if(dms[user][sender].status === 'pending') requests.push(sender);
+                }
+            }
+            reqDiv.innerHTML = requests.map(r => `
+                <div class="dm-item">
+                    <span>@${r.toUpperCase()}</span>
+                    <span class="action" onclick="acceptDM('${r}')">ACEITAR</span>
+                </div>
+            `).join('') || '<div style="font-size:12px; color:#999">SEM PENDÊNCIAS</div>';
+
+            // Active Chats
+            let actives = [];
+            if(dms[user]) {
+                for(let sender in dms[user]) {
+                    if(dms[user][sender].status === 'active') actives.push(sender);
+                }
+            }
+            for(let target in dms) {
+                if(dms[target][user] && dms[target][user].status === 'active') {
+                    if(!actives.includes(target)) actives.push(target);
+                }
+            }
+
+            activeDiv.innerHTML = actives.map(a => `
+                <div class="dm-item" style="cursor:pointer" onclick="openDM('${a}')">
+                    <span>@${a.toUpperCase()}</span>
+                    <span class="badge">ATIVO</span>
+                </div>
+            `).join('') || '<div style="font-size:12px; color:#999">NENHUMA CONVERSA</div>';
+        }
+
+        function saveDMs() {
+            localStorage.setItem('s_dms', JSON.stringify(dms));
+        }
+
         init();
     </script>
 </body>
